@@ -1,0 +1,17 @@
+from django.db import transaction
+
+def test_signal_transaction():
+    with transaction.atomic():
+        MyModel.objects.create(name="Test Instance")  # This will trigger the signal.
+        
+        # Check the counter after creating the instance
+        counter = Counter.objects.get(id=1)
+        print("Counter before rollback:", counter.count)  # Should be 1.
+        
+        # Rollback the transaction
+        transaction.set_autocommit(False)
+        transaction.rollback()  # This will roll back everything done in the atomic block.
+
+        # Check the counter after rollback
+        counter = Counter.objects.get(id=1)
+        print("Counter after rollback:", counter.count)  # Should still be 0, proving the signal ran in the same transaction.
