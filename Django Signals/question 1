@@ -1,0 +1,25 @@
+# signals.py
+import time
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
+from django.dispatch import receiver
+
+@receiver(post_save, sender=User)
+def user_saved_signal(sender, instance, **kwargs):
+    print("Signal started")
+    time.sleep(5)  # Simulating a long-running process
+    print("Signal finished")
+
+
+
+
+
+# views.py
+from django.http import HttpResponse
+import time
+
+def test_signal(request):
+
+    user = User.objects.create(username='testuser')
+
+    return HttpResponse("Signal test complete")
